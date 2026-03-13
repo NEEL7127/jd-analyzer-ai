@@ -1,0 +1,1743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JDAnalyzer.ai — Your Job Strategy in Seconds</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════
+   RESET + TOKENS
+═══════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg     : #09090f;
+  --bg1    : rgba(255,255,255,0.03);
+  --bg2    : rgba(255,255,255,0.055);
+  --bd     : rgba(255,255,255,0.08);
+  --bdhi   : rgba(99,102,241,0.5);
+  --ind    : #6366f1;
+  --ind2   : #818cf8;
+  --gold   : #facc15;
+  --gold2  : #fde68a;
+  --green  : #4ade80;
+  --red    : #f87171;
+  --blue   : #60a5fa;
+  --tx     : #f1f5f9;
+  --s1     : #cbd5e1;
+  --s2     : #94a3b8;
+  --s3     : #64748b;
+  --s4     : #475569;
+  --f      : 'Inter', sans-serif;
+  --m      : 'JetBrains Mono', monospace;
+  --r      : 12px;
+  --r2     : 16px;
+}
+
+html { scroll-behavior: smooth }
+
+body {
+  font-family: var(--f);
+  background: var(--bg);
+  color: var(--tx);
+  font-size: 13px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── ORB GRADIENT BACKGROUND ─── */
+.orb-wrap {
+  position: fixed; inset: 0;
+  pointer-events: none; z-index: 0; overflow: hidden;
+}
+.orb {
+  position: absolute; border-radius: 50%;
+  filter: blur(80px); opacity: 0.07;
+}
+.orb1 { width: 600px; height: 600px; background: var(--ind);  top: -200px; left: -150px; }
+.orb2 { width: 400px; height: 400px; background: var(--gold); top: 200px;  right: -100px; }
+.orb3 { width: 300px; height: 300px; background: #a855f7;     bottom: 200px; left: 40%; }
+
+/* ─── SCROLL PROGRESS ─── */
+#prog {
+  position: fixed; top: 0; left: 0; height: 2px;
+  background: linear-gradient(90deg, var(--ind), var(--gold));
+  z-index: 999; width: 0%; transition: width .1s linear;
+}
+
+/* ─── TOAST ─── */
+#toast-wrap {
+  position: fixed; bottom: 24px; right: 24px;
+  z-index: 9999; display: flex; flex-direction: column; gap: 8px;
+}
+.toast {
+  background: #1a1a2e; border: 1px solid var(--bd);
+  border-radius: 10px; padding: 12px 16px;
+  font-family: var(--m); font-size: 11.5px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  display: flex; align-items: center; gap: 10px;
+  animation: slideIn .25s ease; max-width: 300px;
+  backdrop-filter: blur(12px);
+}
+.toast.err  { border-color: rgba(248,113,113,0.35); color: #fca5a5; }
+.toast.ok   { border-color: rgba(74,222,128,0.35);  color: var(--green); }
+.toast.info { border-color: rgba(99,102,241,0.35);  color: var(--ind2); }
+@keyframes slideIn { from { opacity:0; transform:translateX(16px) } to { opacity:1; transform:translateX(0) } }
+@keyframes slideOut{ from { opacity:1; transform:translateX(0) } to { opacity:0; transform:translateX(16px) } }
+
+/* ─── FLOATING CTA ─── */
+#fab {
+  position: fixed; bottom: 24px; left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  z-index: 500;
+  background: var(--gold); color: #09090f;
+  border: none; border-radius: 50px;
+  padding: 11px 24px; font-family: var(--f);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer; display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 28px rgba(250,204,21,0.3);
+  transition: transform .3s ease, box-shadow .2s;
+}
+#fab.show { transform: translateX(-50%) translateY(0); }
+#fab:hover { box-shadow: 0 12px 36px rgba(250,204,21,0.4); }
+
+/* ─── SCROLLABLE SECTIONS stack ─── */
+#ann, nav, .hero, .main,
+.s-why, .s-demo, .s-use, .s-how,
+.s-tech, .s-testi, .s-faq, footer {
+  position: relative; z-index: 1;
+}
+
+::-webkit-scrollbar { width: 4px }
+::-webkit-scrollbar-track { background: transparent }
+::-webkit-scrollbar-thumb { background: #1e2340; border-radius: 4px }
+
+/* ─── SCROLL REVEAL ─── */
+.reveal {
+  opacity: 0; transform: translateY(20px);
+  transition: opacity .5s ease, transform .5s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: .1s }
+.reveal-d2 { transition-delay: .2s }
+.reveal-d3 { transition-delay: .3s }
+.reveal-d4 { transition-delay: .4s }
+
+/* ═══════════════════════════════════════
+   1. ANNOUNCEMENT BAR
+═══════════════════════════════════════ */
+#ann {
+  height: 32px;
+  background: linear-gradient(90deg, #4f46e5, #6366f1, #818cf8);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--m); font-size: 11px; color: #fff;
+  letter-spacing: .2px; gap: 10px; position: relative;
+}
+#ann-x {
+  position: absolute; right: 12px;
+  background: none; border: none; color: rgba(255,255,255,.6);
+  font-size: 16px; cursor: pointer; line-height: 1; padding: 0 4px;
+  transition: color .15s;
+}
+#ann-x:hover { color: #fff }
+
+/* ═══════════════════════════════════════
+   2. NAVBAR
+═══════════════════════════════════════ */
+nav {
+  height: 52px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 32px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  background: rgba(9,9,15,0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  position: sticky; top: 0; z-index: 200;
+  transition: border-color .3s;
+}
+nav.scrolled { border-bottom-color: rgba(99,102,241,0.2); }
+
+.logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+.logo-sq {
+  width: 28px; height: 28px; border-radius: 8px;
+  background: linear-gradient(135deg, var(--ind), var(--ind2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(99,102,241,.4);
+}
+.logo-txt { font-size: 14px; font-weight: 700; color: var(--tx); }
+.logo-txt b { color: var(--gold); }
+
+.nav-mid { display: flex; gap: 24px; }
+.nl {
+  font-family: var(--m); font-size: 11px; color: var(--s3);
+  cursor: pointer; letter-spacing: .3px;
+  background: none; border: none; transition: color .15s;
+}
+.nl:hover { color: var(--s1); }
+
+.nav-btn {
+  font-family: var(--m); font-size: 11px; padding: 6px 14px;
+  border: 1px solid rgba(99,102,241,.3); border-radius: 6px;
+  color: var(--ind2); background: rgba(99,102,241,.07);
+  cursor: pointer; letter-spacing: .3px; transition: all .15s;
+}
+.nav-btn:hover { background: rgba(99,102,241,.14); border-color: rgba(99,102,241,.55); }
+
+/* ═══════════════════════════════════════
+   3. HERO
+═══════════════════════════════════════ */
+.hero {
+  max-width: 880px; margin: 0 auto;
+  padding: 52px 32px 44px;
+}
+
+.tag-pill {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--m); font-size: 10px; color: var(--ind2);
+  border: 1px solid rgba(99,102,241,.25); border-radius: 4px;
+  padding: 4px 11px; background: rgba(99,102,241,.07);
+  letter-spacing: .8px; margin-bottom: 18px;
+}
+.tag-pill .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--ind); animation: blink 2s ease-in-out infinite;
+}
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+h1 {
+  font-size: 30px; font-weight: 800; line-height: 1.18;
+  letter-spacing: -.6px; margin-bottom: 14px;
+  max-width: 580px;
+}
+h1 .c-ind {
+  background: linear-gradient(135deg, var(--ind2), #a78bfa);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+h1 .c-dim { color: var(--s3); }
+
+.hero-p {
+  font-family: var(--m); font-size: 12px; color: var(--s2);
+  max-width: 440px; line-height: 1.85; margin-bottom: 26px;
+}
+
+.hero-btns {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 36px; flex-wrap: wrap;
+}
+
+.btn-primary {
+  padding: 11px 22px; background: var(--gold); color: #09090f;
+  border: none; border-radius: 8px; font-family: var(--f);
+  font-size: 13px; font-weight: 700; cursor: pointer;
+  transition: all .2s; display: flex; align-items: center; gap: 7px;
+}
+.btn-primary:hover {
+  background: var(--gold2);
+  box-shadow: 0 6px 24px rgba(250,204,21,.25);
+  transform: translateY(-1px);
+}
+.btn-primary:active { transform: scale(.98); }
+
+.hero-sec {
+  font-family: var(--m); font-size: 11px; color: var(--s3);
+  cursor: pointer; background: none; border: none;
+  transition: color .15s; padding: 0;
+}
+.hero-sec:hover { color: var(--s2); }
+
+/* STATS */
+.stats {
+  display: flex; gap: 32px; flex-wrap: wrap;
+  padding-bottom: 28px; border-bottom: 1px solid var(--bd);
+  margin-bottom: 24px;
+}
+.stat { }
+.sv {
+  font-size: 22px; font-weight: 800; letter-spacing: -.5px;
+  line-height: 1; margin-bottom: 3px;
+}
+.sv .u { color: var(--gold); font-size: 14px; }
+.sl { font-family: var(--m); font-size: 9px; color: var(--s4); letter-spacing: 1.5px; }
+
+/* BENTO FEATURE GRID */
+.bento {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+.bcard {
+  background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: 10px; padding: 10px 13px;
+  display: flex; align-items: center; gap: 7px;
+  font-size: 12px; color: var(--s2);
+  transition: all .2s; cursor: default;
+}
+.bcard:hover {
+  border-color: rgba(99,102,241,.3); color: var(--ind2);
+  background: rgba(99,102,241,.05); transform: translateY(-1px);
+}
+
+/* ═══════════════════════════════════════
+   SECTION WRAPPER
+═══════════════════════════════════════ */
+.s { max-width: 880px; margin: 0 auto; padding: 48px 32px; }
+
+.ey {
+  font-family: var(--m); font-size: 10px; color: var(--s4);
+  letter-spacing: 2.5px; margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.ey::after { content:''; flex: 1; height: 1px; background: var(--bd); }
+
+.st { font-size: 22px; font-weight: 700; letter-spacing: -.4px; margin-bottom: 5px; }
+.ss { font-family: var(--m); font-size: 11.5px; color: var(--s3); margin-bottom: 24px; }
+
+/* ═══════════════════════════════════════
+   4. WHY USE THIS
+═══════════════════════════════════════ */
+.s-why {
+  border-top: 1px solid var(--bd);
+  border-bottom: 1px solid var(--bd);
+  background: rgba(255,255,255,.01);
+}
+
+.why-g { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+
+.why-c {
+  background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: var(--r2); padding: 20px;
+  position: relative; transition: all .2s; overflow: hidden;
+}
+.why-c::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(99,102,241,0.05), transparent 60%);
+  opacity: 0; transition: opacity .3s;
+}
+.why-c:hover::before { opacity: 1; }
+.why-c:hover { transform: translateY(-2px); border-color: rgba(99,102,241,.2); }
+
+.why-c.bad  { border-left: 2px solid rgba(248,113,113,.45); }
+.why-c.good { border-left: 2px solid var(--ind); background: rgba(99,102,241,.04); }
+.why-c.tech { border-left: 2px solid rgba(250,204,21,.45); }
+
+.why-badge {
+  position: absolute; top: 12px; right: 12px;
+  font-family: var(--m); font-size: 9px; padding: 2px 7px;
+  border-radius: 3px; background: rgba(99,102,241,.12);
+  color: var(--ind2); border: 1px solid rgba(99,102,241,.25);
+}
+.wci { font-size: 18px; margin-bottom: 10px; }
+.wct { font-size: 12px; font-weight: 700; margin-bottom: 12px; }
+.why-c.bad  .wct { color: var(--red); }
+.why-c.good .wct { color: var(--ind2); }
+.why-c.tech .wct { color: var(--gold); }
+
+.wi-list { display: flex; flex-direction: column; gap: 7px; }
+.wi-row {
+  font-family: var(--m); font-size: 11px; color: var(--s2);
+  display: flex; align-items: flex-start; gap: 7px; line-height: 1.5;
+}
+.wi-dot { flex-shrink: 0; }
+
+/* ═══════════════════════════════════════
+   5. DEMO PREVIEW
+═══════════════════════════════════════ */
+.demo-g {
+  display: grid; grid-template-columns: repeat(2,1fr);
+  gap: 10px; margin-bottom: 22px;
+}
+.demo-c {
+  background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: var(--r2); padding: 18px;
+  transition: all .2s; position: relative; overflow: hidden;
+}
+.demo-c::after {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(99,102,241,.4), transparent);
+  opacity: 0; transition: opacity .3s;
+}
+.demo-c:hover { border-color: rgba(99,102,241,.2); transform: translateY(-2px); }
+.demo-c:hover::after { opacity: 1; }
+
+.demo-ch {
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 13px; padding-bottom: 11px;
+  border-bottom: 1px solid var(--bd);
+}
+.demo-ci { font-size: 16px; }
+.demo-ct { font-size: 12px; font-weight: 700; }
+
+.demo-items { display: flex; flex-direction: column; gap: 5px; }
+.demo-row {
+  font-family: var(--m); font-size: 11px; color: var(--s2);
+  line-height: 1.6; padding: 2px 0;
+}
+
+.demo-cta { text-align: center; }
+
+.btn-ind {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 10px 22px; background: var(--ind); color: #fff;
+  border: none; border-radius: 8px; font-family: var(--f);
+  font-size: 13px; font-weight: 600; cursor: pointer;
+  transition: all .2s;
+}
+.btn-ind:hover {
+  background: var(--ind2);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(99,102,241,.3);
+}
+
+/* ═══════════════════════════════════════
+   6. USE CASES
+═══════════════════════════════════════ */
+.s-use {
+  border-top: 1px solid var(--bd);
+  border-bottom: 1px solid var(--bd);
+  background: rgba(255,255,255,.01);
+}
+
+.use-g { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+
+.use-c {
+  background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: var(--r2); padding: 18px;
+  transition: all .2s; cursor: default;
+}
+.use-c:hover {
+  border-color: rgba(99,102,241,.3);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(99,102,241,.1);
+}
+
+.use-tag {
+  display: inline-block; font-family: var(--m);
+  font-size: 9px; padding: 2px 8px;
+  border-radius: 3px; letter-spacing: 1px; margin-bottom: 11px;
+  background: rgba(99,102,241,.08); color: var(--ind2);
+  border: 1px solid rgba(99,102,241,.2);
+}
+.use-ico { font-size: 20px; margin-bottom: 8px; }
+.use-ti { font-size: 12px; font-weight: 700; margin-bottom: 7px; }
+.use-de { font-family: var(--m); font-size: 10.5px; color: var(--s3); line-height: 1.65; }
+
+/* ═══════════════════════════════════════
+   7/8. MAIN — INPUT + LOADING + RESULTS
+═══════════════════════════════════════ */
+.main { max-width: 880px; margin: 0 auto; padding: 0 32px 64px; }
+
+.m-ey {
+  font-family: var(--m); font-size: 10px; color: var(--s4);
+  letter-spacing: 2.5px; margin-bottom: 12px; margin-top: 52px;
+  display: flex; align-items: center; gap: 10px;
+}
+.m-ey::after { content:''; flex: 1; height: 1px; background: var(--bd); }
+
+/* INPUT CARD */
+.in-card {
+  background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: var(--r2); padding: 22px;
+  position: relative; overflow: hidden; transition: border .25s;
+}
+.in-card::after {
+  content: ''; position: absolute;
+  top: 0; left: -100%; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--ind), var(--gold), transparent);
+  transition: left .6s;
+}
+.in-card:focus-within { border-color: var(--bdhi); }
+.in-card:focus-within::after { left: 0; }
+
+.in-hd {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 11px;
+}
+.in-lb { font-family: var(--m); font-size: 9.5px; color: var(--s4); letter-spacing: 2px; }
+
+.wc-b {
+  font-family: var(--m); font-size: 10px; color: var(--s2);
+  background: var(--bg2); padding: 3px 10px;
+  border-radius: 4px; border: 1px solid var(--bd);
+  transition: all .2s;
+}
+.wc-b.low  { color: var(--red);   border-color: rgba(248,113,113,.3); }
+.wc-b.ok   { color: var(--green); border-color: rgba(74,222,128,.3);  }
+
+textarea {
+  width: 100%; min-height: 195px;
+  background: rgba(255,255,255,.02); border: 1px solid var(--bd);
+  border-radius: 9px; padding: 13px 15px; color: var(--tx);
+  font-family: var(--m); font-size: 12px; resize: vertical;
+  line-height: 1.8; transition: border .2s;
+}
+textarea:focus { outline: none; border-color: rgba(99,102,241,.3); }
+textarea::placeholder { color: #1c2240; font-size: 11.5px; }
+
+.in-tip {
+  font-family: var(--m); font-size: 10.5px; color: var(--s4);
+  margin-top: 9px; padding: 8px 12px;
+  background: var(--bg2); border-radius: 7px; border: 1px solid var(--bd);
+}
+
+.btn-go {
+  width: 100%; padding: 12px; margin-top: 11px;
+  background: var(--gold); color: #09090f; border: none;
+  border-radius: 9px; font-family: var(--f); font-size: 13px;
+  font-weight: 700; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: all .2s; letter-spacing: -.1px;
+}
+.btn-go:hover {
+  background: var(--gold2);
+  box-shadow: 0 6px 22px rgba(250,204,21,.22);
+  transform: translateY(-1px);
+}
+.btn-go:active { transform: scale(.99); }
+.btn-go:disabled { opacity: .3; cursor: not-allowed; transform: none; box-shadow: none; }
+
+.spin {
+  width: 14px; height: 14px;
+  border: 2px solid rgba(9,9,15,.2); border-top: 2px solid #09090f;
+  border-radius: 50%; animation: sp .6s linear infinite; display: none;
+}
+@keyframes sp { to { transform: rotate(360deg) } }
+
+/* LOADING CARD */
+.ld-card {
+  display: none; background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: var(--r2); padding: 48px 28px; text-align: center;
+}
+.ld-ico { font-size: 32px; margin-bottom: 14px; animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.92)} }
+.ld-ti { font-size: 16px; font-weight: 700; letter-spacing: -.3px; margin-bottom: 5px; }
+.ld-su { font-family: var(--m); font-size: 11px; color: var(--s3); margin-bottom: 26px; }
+
+.steps-g {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 7px;
+  max-width: 370px; margin: 0 auto;
+}
+.step {
+  display: flex; align-items: center; gap: 8px;
+  background: var(--bg2); border: 1px solid var(--bd);
+  border-radius: 8px; padding: 9px 12px;
+  font-family: var(--m); font-size: 11px; color: var(--s3);
+  transition: all .3s; text-align: left;
+}
+.step.active {
+  border-color: rgba(99,102,241,.4); color: var(--tx);
+  background: rgba(99,102,241,.07);
+}
+.step.done {
+  border-color: rgba(74,222,128,.25); color: var(--green);
+  background: rgba(74,222,128,.04);
+}
+.s-dot {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid currentColor;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; flex-shrink: 0;
+}
+
+/* RESULTS */
+.results { display: none; animation: fu .4s ease; }
+@keyframes fu { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+
+.ok-bar {
+  display: flex; align-items: center; gap: 10px;
+  background: rgba(74,222,128,.05);
+  border: 1px solid rgba(74,222,128,.15);
+  border-radius: 10px; padding: 12px 16px; margin-bottom: 18px;
+  font-size: 13px; color: var(--green);
+}
+.ok-bar .meta {
+  margin-left: auto; font-family: var(--m); font-size: 10px; color: var(--s3);
+}
+
+/* TABS */
+.tabs { display: flex; gap: 5px; margin-bottom: 11px; flex-wrap: wrap; }
+.tab {
+  padding: 8px 15px; background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: 8px; color: var(--s3); font-family: var(--f);
+  font-size: 12px; font-weight: 600; cursor: pointer; transition: all .15s;
+}
+.tab:hover { border-color: rgba(99,102,241,.2); color: var(--s2); }
+.tab.active {
+  background: rgba(99,102,241,.1);
+  border-color: rgba(99,102,241,.45);
+  color: var(--ind2);
+}
+
+/* PANELS */
+.panel {
+  display: none; background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: var(--r2); padding: 24px; margin-bottom: 11px;
+  animation: fu .22s ease; position: relative; overflow: hidden;
+}
+.panel::before {
+  content: ''; position: absolute; left: 0; top: 12%; bottom: 12%;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--ind), transparent);
+  border-radius: 2px;
+}
+.panel.active { display: block; }
+
+.p-hd {
+  display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 18px;
+  flex-wrap: wrap; gap: 8px;
+}
+.p-ti { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 7px; }
+
+.rb { font-family: var(--m); font-size: 12px; line-height: 1.95; color: var(--s2); }
+
+.rb .sh {
+  font-family: var(--f); font-size: 12px; font-weight: 700;
+  color: var(--tx); margin: 18px 0 8px;
+  padding: 7px 13px 7px 14px;
+  background: rgba(99,102,241,.05);
+  border-left: 2px solid var(--ind);
+  border-radius: 0 7px 7px 0; display: block;
+}
+.rb .sh:first-child { margin-top: 0; }
+.rb .bl { display: flex; gap: 8px; margin-bottom: 5px; padding-left: 4px; }
+.rb .bd { color: var(--ind2); flex-shrink: 0; font-weight: 600; margin-top: 1px; }
+.rb .hg { color: var(--green);  font-weight: 500; }
+.rb .hr { color: var(--red);    font-weight: 500; }
+.rb .hy { color: var(--gold);   font-weight: 500; }
+.rb .hb { color: var(--blue);   font-weight: 500; }
+
+.cp-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: transparent; border: 1px solid var(--bd);
+  color: var(--s3); padding: 6px 12px;
+  border-radius: 6px; font-family: var(--m); font-size: 10.5px;
+  cursor: pointer; transition: all .15s;
+}
+.cp-btn:hover { border-color: rgba(99,102,241,.3); color: var(--ind2); }
+
+/* CHAT CARD */
+.chat-card {
+  background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: var(--r2); padding: 22px; margin-bottom: 11px;
+  position: relative; overflow: hidden;
+}
+.chat-card::before {
+  content: ''; position: absolute; left: 0; top: 12%; bottom: 12%;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--blue), transparent);
+  border-radius: 2px;
+}
+.ch-ti { font-size: 14px; font-weight: 700; margin-bottom: 2px; }
+.ch-su {
+  font-family: var(--m); font-size: 9.5px; color: var(--s4);
+  letter-spacing: 1.5px; margin-bottom: 15px;
+}
+
+.qqs { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 13px; }
+.qq {
+  background: var(--bg2); border: 1px solid var(--bd);
+  border-radius: 6px; padding: 5px 11px;
+  font-family: var(--m); font-size: 10.5px; color: var(--s3);
+  cursor: pointer; transition: all .15s;
+}
+.qq:hover {
+  border-color: rgba(99,102,241,.28);
+  color: var(--ind2); background: rgba(99,102,241,.06);
+  transform: translateY(-1px);
+}
+
+.msgs {
+  min-height: 70px; max-height: 320px; overflow-y: auto;
+  display: flex; flex-direction: column; gap: 8px;
+  margin-bottom: 11px; padding-right: 4px;
+}
+.msg {
+  padding: 11px 13px; border-radius: 10px;
+  font-family: var(--m); font-size: 12px; line-height: 1.7;
+  animation: fu .2s ease; max-width: 90%;
+}
+.msg.user {
+  background: rgba(99,102,241,.09);
+  border: 1px solid rgba(99,102,241,.2);
+  color: #c7d2fe; align-self: flex-end;
+}
+.msg.ai {
+  background: var(--bg2); border: 1px solid var(--bd);
+  color: var(--s2);
+}
+.msg.ai .ai-tag {
+  font-size: 9px; color: var(--ind2); letter-spacing: 1.5px;
+  margin-bottom: 5px; display: block;
+}
+.msg.typing { color: var(--s3); font-style: italic; }
+
+.chat-row { display: flex; gap: 7px; }
+.ci {
+  flex: 1; background: rgba(255,255,255,.025);
+  border: 1px solid var(--bd);
+  border-radius: 8px; padding: 10px 13px; color: var(--tx);
+  font-family: var(--m); font-size: 12px; transition: border .15s;
+}
+.ci:focus { outline: none; border-color: rgba(99,102,241,.3); }
+.ci::placeholder { color: #1c2240; font-size: 11px; }
+
+.btn-send {
+  padding: 10px 18px; background: var(--gold); color: #09090f;
+  border: none; border-radius: 8px; font-family: var(--f);
+  font-size: 12px; font-weight: 700; cursor: pointer;
+  transition: all .15s; white-space: nowrap;
+}
+.btn-send:hover { background: var(--gold2); }
+.btn-send:disabled { opacity: .3; cursor: not-allowed; }
+
+.btn-reset {
+  width: 100%; padding: 12px; background: transparent;
+  border: 1px solid var(--bd); border-radius: 9px;
+  color: var(--s3); font-family: var(--f); font-size: 12px;
+  font-weight: 600; cursor: pointer; transition: all .15s;
+  margin-bottom: 14px;
+}
+.btn-reset:hover { border-color: rgba(99,102,241,.28); color: var(--ind2); }
+
+/* ═══════════════════════════════════════
+   9. HOW IT WORKS
+═══════════════════════════════════════ */
+.s-how {
+  border-top: 1px solid var(--bd);
+  border-bottom: 1px solid var(--bd);
+  background: rgba(255,255,255,.01);
+}
+
+.pipe { display: flex; gap: 0; }
+.ps {
+  flex: 1; background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: var(--r); padding: 16px 14px;
+  margin: 0 4px; transition: all .2s; position: relative;
+}
+.ps:first-child { margin-left: 0; }
+.ps:last-child  { margin-right: 0; }
+.ps:hover {
+  border-color: rgba(99,102,241,.25);
+  transform: translateY(-3px);
+  background: rgba(99,102,241,.05);
+  box-shadow: 0 8px 24px rgba(99,102,241,.12);
+}
+/* connector line */
+.ps:not(:last-child)::after {
+  content: '→';
+  position: absolute; right: -12px; top: 50%;
+  transform: translateY(-50%);
+  font-size: 11px; color: var(--s4); z-index: 2;
+}
+.ps-n {
+  font-family: var(--m); font-size: 9px; color: var(--ind2);
+  letter-spacing: 1.5px; margin-bottom: 8px; display: block;
+}
+.ps-i { font-size: 18px; margin-bottom: 7px; }
+.ps-t { font-size: 12px; font-weight: 700; margin-bottom: 4px; }
+.ps-d { font-family: var(--m); font-size: 10px; color: var(--s3); line-height: 1.5; }
+
+/* ═══════════════════════════════════════
+   10. TECH STACK
+═══════════════════════════════════════ */
+.tc-g { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; }
+.tc-c {
+  background: var(--bg1); border: 1px solid var(--bd);
+  border-radius: var(--r2); padding: 17px; transition: all .2s;
+  position: relative; overflow: hidden;
+}
+.tc-c::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, var(--ind), var(--gold));
+  transform: scaleX(0); transition: transform .3s;
+  transform-origin: left;
+}
+.tc-c:hover { border-color: rgba(99,102,241,.2); transform: translateY(-2px); }
+.tc-c:hover::after { transform: scaleX(1); }
+
+.tc-l { font-family: var(--m); font-size: 9px; color: var(--s4); letter-spacing: 1.5px; margin-bottom: 5px; }
+.tc-n { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+.tc-n span { color: var(--gold); }
+.tc-d { font-family: var(--m); font-size: 10.5px; color: var(--s3); line-height: 1.5; }
+
+/* ═══════════════════════════════════════
+   11. TESTIMONIALS
+═══════════════════════════════════════ */
+.s-testi {
+  border-top: 1px solid var(--bd);
+  border-bottom: 1px solid var(--bd);
+  background: rgba(255,255,255,.01);
+}
+
+.tes-g { display: grid; grid-template-columns: repeat(3,1fr); gap: 11px; }
+
+.tes-c {
+  background: var(--bg1);
+  border: 1px solid var(--bd);
+  border-left: 2px solid rgba(99,102,241,.4);
+  border-radius: var(--r2); padding: 20px;
+  transition: all .2s;
+}
+.tes-c:hover {
+  border-color: rgba(99,102,241,.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(99,102,241,.1);
+}
+
+.stars { font-size: 11px; margin-bottom: 11px; letter-spacing: 1.5px; }
+.tes-q {
+  font-family: var(--m); font-size: 11px; color: var(--s2);
+  line-height: 1.8; margin-bottom: 15px;
+  padding-bottom: 15px; border-bottom: 1px solid var(--bd);
+}
+.tes-q::before { content: '"'; color: var(--ind2); font-size: 18px; line-height: 0; vertical-align: -4px; margin-right: 2px; }
+.tes-f { display: flex; align-items: center; gap: 9px; }
+.tes-av {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--ind), var(--ind2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; flex-shrink: 0;
+}
+.tes-n { font-size: 12px; font-weight: 700; margin-bottom: 1px; }
+.tes-r { font-family: var(--m); font-size: 10px; color: var(--s3); }
+.tes-tg {
+  margin-left: auto; font-family: var(--m); font-size: 9.5px;
+  padding: 2px 8px; border-radius: 3px;
+  background: rgba(99,102,241,.08); color: var(--ind2);
+  border: 1px solid rgba(99,102,241,.18); white-space: nowrap;
+}
+
+/* ═══════════════════════════════════════
+   12. FAQ
+═══════════════════════════════════════ */
+.faq-list { display: flex; flex-direction: column; }
+.faq-item { border-bottom: 1px solid var(--bd); }
+.faq-item:first-child { border-top: 1px solid var(--bd); }
+.faq-q {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  padding: 16px 4px; cursor: pointer; gap: 14px;
+}
+.faq-q:hover .fq-t { color: var(--ind2); }
+.fq-t { font-size: 13px; font-weight: 600; transition: color .15s; }
+.fq-i {
+  font-size: 16px; color: var(--s3); flex-shrink: 0;
+  transition: transform .25s, color .25s;
+  font-family: var(--m); font-weight: 400;
+}
+.faq-item.open .fq-i { transform: rotate(45deg); color: var(--ind2); }
+.faq-item.open .fq-t { color: var(--ind2); }
+.faq-a {
+  font-family: var(--m); font-size: 11.5px; color: var(--s3);
+  line-height: 1.75; padding: 0 4px;
+  max-height: 0; overflow: hidden;
+  transition: max-height .3s ease, padding .3s ease;
+}
+.faq-item.open .faq-a { max-height: 180px; padding-bottom: 16px; }
+
+/* ═══════════════════════════════════════
+   FOOTER
+═══════════════════════════════════════ */
+footer {
+  border-top: 1px solid var(--bd);
+  padding: 32px 32px 0;
+  position: relative; z-index: 1;
+}
+.ft {
+  max-width: 880px; margin: 0 auto;
+  display: grid; grid-template-columns: 1.4fr 1fr 1.2fr;
+  gap: 32px; padding-bottom: 24px;
+}
+.f-logo { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+.f-tag { font-family: var(--m); font-size: 11px; color: var(--s4); line-height: 1.7; }
+.f-col-t { font-size: 11px; font-weight: 700; margin-bottom: 11px; color: var(--s2); }
+.f-links { display: flex; flex-direction: column; gap: 9px; }
+.f-link {
+  font-family: var(--m); font-size: 10.5px; color: var(--s4);
+  cursor: pointer; transition: color .15s; background: none;
+  border: none; text-align: left;
+}
+.f-link:hover { color: var(--ind2); }
+.f-by  { font-family: var(--m); font-size: 11.5px; color: var(--s2); margin-bottom: 4px; }
+.f-loc { font-family: var(--m); font-size: 10.5px; color: var(--s4); margin-bottom: 11px; }
+.f-tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.ftag {
+  font-family: var(--m); font-size: 9.5px; padding: 2px 9px;
+  border: 1px solid var(--bd); border-radius: 3px; color: var(--s4);
+}
+.fb {
+  max-width: 880px; margin: 0 auto;
+  border-top: 1px solid var(--bd); padding: 14px 0;
+  display: flex; justify-content: space-between;
+  align-items: center; flex-wrap: wrap; gap: 7px;
+}
+.fb span { font-family: var(--m); font-size: 10px; color: var(--s4); }
+
+/* ═══════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════ */
+@media(max-width:840px){
+  .why-g  { grid-template-columns: 1fr; }
+  .demo-g { grid-template-columns: 1fr; }
+  .use-g  { grid-template-columns: repeat(2,1fr); }
+  .pipe   { flex-direction: column; }
+  .ps     { margin: 3px 0; }
+  .ps:not(:last-child)::after { display: none; }
+  .tc-g   { grid-template-columns: repeat(2,1fr); }
+  .tes-g  { grid-template-columns: 1fr; }
+  .ft     { grid-template-columns: 1fr; }
+  .bento  { grid-template-columns: repeat(3,1fr); }
+}
+@media(max-width:560px){
+  nav,.hero,.s,.main,footer { padding-left: 14px; padding-right: 14px; }
+  .nav-mid { display: none; }
+  .use-g   { grid-template-columns: 1fr; }
+  .tc-g    { grid-template-columns: 1fr; }
+  h1       { font-size: 22px; }
+  .steps-g { grid-template-columns: 1fr; }
+  .stats   { gap: 18px; }
+  .bento   { grid-template-columns: repeat(2,1fr); }
+  #fab     { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ORB BACKGROUNDS -->
+<div class="orb-wrap">
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+</div>
+
+<!-- SCROLL PROGRESS BAR -->
+<div id="prog"></div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-wrap"></div>
+
+<!-- FLOATING CTA -->
+<button id="fab" onclick="document.getElementById('inputCard').scrollIntoView({behavior:'smooth'})">
+  ⚡ Analyze My JD
+</button>
+
+<!-- ── 1. ANNOUNCEMENT BAR ── -->
+<div id="ann">
+  <span>🚀 Parallel AI analysis — 4 results in ~8 seconds &nbsp;·&nbsp; 100% Free · No Signup</span>
+  <button id="ann-x" onclick="document.getElementById('ann').style.display='none'">×</button>
+</div>
+
+<!-- ── 2. NAVBAR ── -->
+<nav id="navbar">
+  <a class="logo" href="#">
+    <div class="logo-sq">💼</div>
+    <div class="logo-txt">JDAnalyzer<b>.ai</b></div>
+  </a>
+  <div class="nav-mid">
+    <button class="nl" onclick="document.querySelector('.s-why').scrollIntoView({behavior:'smooth'})">Why Use This</button>
+    <button class="nl" onclick="document.querySelector('.s-use').scrollIntoView({behavior:'smooth'})">Use Cases</button>
+    <button class="nl" onclick="document.querySelector('.s-how').scrollIntoView({behavior:'smooth'})">How it Works</button>
+    <button class="nl" onclick="document.querySelector('.s-tech').scrollIntoView({behavior:'smooth'})">Tech Stack</button>
+    <button class="nl" onclick="document.querySelector('.s-faq').scrollIntoView({behavior:'smooth'})">FAQ</button>
+  </div>
+  <button class="nav-btn" onclick="document.getElementById('inputCard').scrollIntoView({behavior:'smooth'})">Try Free ↓</button>
+</nav>
+
+<!-- ── 3. HERO ── -->
+<div class="hero">
+  <div class="tag-pill reveal">
+    <span class="dot"></span>
+    ⚡ RAG + LLAMA 3.3 · POWERED BY GROQ
+  </div>
+
+  <h1 class="reveal reveal-d1">
+    Paste any Job Description.<br>
+    Get your <span class="c-ind">complete game plan</span><br>
+    <span class="c-dim">in seconds.</span>
+  </h1>
+
+  <p class="hero-p reveal reveal-d2">
+    Skill gap · 30-day roadmap · Interview questions · Resume tips<br>
+    — all extracted from YOUR specific JD using a RAG pipeline.
+  </p>
+
+  <div class="hero-btns reveal reveal-d2">
+    <button class="btn-primary" onclick="document.getElementById('inputCard').scrollIntoView({behavior:'smooth'})">
+      ⚡ Analyze My JD
+    </button>
+    <button class="hero-sec" onclick="document.querySelector('.s-how').scrollIntoView({behavior:'smooth'})">
+      See how it works ↓
+    </button>
+  </div>
+
+  <div class="stats reveal reveal-d3">
+    <div class="stat">
+      <div class="sv" data-count="4" data-suffix="×">0×</div>
+      <div class="sl">PARALLEL ANALYSES</div>
+    </div>
+    <div class="stat">
+      <div class="sv">~8<span class="u">s</span></div>
+      <div class="sl">AVERAGE SPEED</div>
+    </div>
+    <div class="stat">
+      <div class="sv" data-count="100" data-suffix="%">0%</div>
+      <div class="sl">JD-SPECIFIC</div>
+    </div>
+    <div class="stat">
+      <div class="sv">0<span class="u">₹</span></div>
+      <div class="sl">COST TO USE</div>
+    </div>
+  </div>
+
+  <div class="bento reveal reveal-d4">
+    <div class="bcard">🎯 Skill Gap</div>
+    <div class="bcard">📚 30-Day Roadmap</div>
+    <div class="bcard">❓ Interview Qs</div>
+    <div class="bcard">📝 Resume Tips</div>
+    <div class="bcard">💬 Chat with JD</div>
+  </div>
+</div>
+
+<!-- ── 4. WHY USE THIS ── -->
+<div class="s-why">
+  <div class="s">
+    <div class="ey reveal">WHY JD ANALYZER</div>
+    <div class="st reveal">Stop using ChatGPT for job prep.</div>
+    <div class="ss reveal">Generic AI gives generic answers. JD Analyzer reads YOUR specific JD using RAG.</div>
+    <div class="why-g">
+      <div class="why-c bad reveal reveal-d1">
+        <div class="wci">❌</div>
+        <div class="wct">ChatGPT Approach</div>
+        <div class="wi-list">
+          <div class="wi-row"><span class="wi-dot">—</span>Gives generic skill lists not from your JD</div>
+          <div class="wi-row"><span class="wi-dot">—</span>Roadmaps not based on actual requirements</div>
+          <div class="wi-row"><span class="wi-dot">—</span>Can't extract exact ATS keywords</div>
+          <div class="wi-row"><span class="wi-dot">—</span>No JD-specific interview prediction</div>
+          <div class="wi-row"><span class="wi-dot">—</span>Hallucinates company details</div>
+        </div>
+      </div>
+      <div class="why-c good reveal reveal-d2">
+        <div class="why-badge">RECOMMENDED</div>
+        <div class="wci">✅</div>
+        <div class="wct">JD Analyzer Approach</div>
+        <div class="wi-list">
+          <div class="wi-row"><span class="wi-dot">→</span>Reads every line of YOUR specific JD</div>
+          <div class="wi-row"><span class="wi-dot">→</span>Roadmap built for THIS exact role</div>
+          <div class="wi-row"><span class="wi-dot">→</span>Extracts exact ATS keywords from JD</div>
+          <div class="wi-row"><span class="wi-dot">→</span>Predicts questions from this JD only</div>
+          <div class="wi-row"><span class="wi-dot">→</span>RAG ensures zero hallucination</div>
+        </div>
+      </div>
+      <div class="why-c tech reveal reveal-d3">
+        <div class="wci">💡</div>
+        <div class="wct">What Makes It Work</div>
+        <div class="wi-list">
+          <div class="wi-row"><span class="wi-dot">⚙</span>RAG pipeline — not prompt stuffing</div>
+          <div class="wi-row"><span class="wi-dot">⚙</span>ChromaDB semantic vector search</div>
+          <div class="wi-row"><span class="wi-dot">⚙</span>384-dim sentence embeddings</div>
+          <div class="wi-row"><span class="wi-dot">⚙</span>Llama 3.3 70B on retrieved context</div>
+          <div class="wi-row"><span class="wi-dot">⚙</span>4 parallel calls via ThreadPool</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 5. DEMO PREVIEW ── -->
+<div class="s-demo">
+  <div class="s">
+    <div class="ey reveal">SEE IT IN ACTION</div>
+    <div class="st reveal">Here's what you get in ~8 seconds</div>
+    <div class="ss reveal">Sample output for an AI/ML Engineer JD — Groww, Bangalore</div>
+    <div class="demo-g">
+      <div class="demo-c reveal reveal-d1">
+        <div class="demo-ch"><div class="demo-ci">🎯</div><div class="demo-ct">Skill Gap Analysis</div></div>
+        <div class="demo-items">
+          <div class="demo-row">✅ Python 3+ yrs — CRITICAL, mentioned 4×</div>
+          <div class="demo-row">✅ PyTorch / scikit-learn — Must have</div>
+          <div class="demo-row">💡 Docker — Nice to have</div>
+          <div class="demo-row">🔥 Top priority: FastAPI + ML deployment</div>
+          <div class="demo-row">❌ Not required: React, frontend skills</div>
+        </div>
+      </div>
+      <div class="demo-c reveal reveal-d2">
+        <div class="demo-ch"><div class="demo-ci">📚</div><div class="demo-ct">30-Day Roadmap</div></div>
+        <div class="demo-items">
+          <div class="demo-row">Week 1: Python + ML basics · fast.ai</div>
+          <div class="demo-row">Week 2: Build REST APIs with FastAPI</div>
+          <div class="demo-row">Week 3: Deploy ML model end-to-end</div>
+          <div class="demo-row">Week 4: Mock interviews + portfolio push</div>
+          <div class="demo-row">🔥 Final: ML API with monitoring</div>
+        </div>
+      </div>
+      <div class="demo-c reveal reveal-d3">
+        <div class="demo-ch"><div class="demo-ci">❓</div><div class="demo-ct">Interview Questions</div></div>
+        <div class="demo-items">
+          <div class="demo-row">Q1: Batch vs online learning — explain</div>
+          <div class="demo-row">Q2: Deploy PyTorch model to production?</div>
+          <div class="demo-row">Q3: Model drift — what is it, how to handle?</div>
+          <div class="demo-row">Q4: Design a feature store from scratch</div>
+          <div class="demo-row">💡 All based on YOUR JD only</div>
+        </div>
+      </div>
+      <div class="demo-c reveal reveal-d4">
+        <div class="demo-ch"><div class="demo-ci">📝</div><div class="demo-ct">Resume Tips</div></div>
+        <div class="demo-items">
+          <div class="demo-row">🔑 ATS: FastAPI, PyTorch, CI/CD, MLOps</div>
+          <div class="demo-row">📝 "ML Eng | Python · FastAPI · PyTorch"</div>
+          <div class="demo-row">✅ Add: MLflow, model versioning, REST API</div>
+          <div class="demo-row">❌ Remove: unrelated frontend skills</div>
+          <div class="demo-row">💡 Repeat keywords naturally in bullets</div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-cta reveal">
+      <button class="btn-ind" onclick="document.getElementById('inputCard').scrollIntoView({behavior:'smooth'})">⚡ Try It Yourself →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── 6. USE CASES ── -->
+<div class="s-use">
+  <div class="s">
+    <div class="ey reveal">WHO IS THIS FOR</div>
+    <div class="st reveal">Built for every stage of your job journey</div>
+    <div class="ss reveal">Whether you're a fresher or a 5-year professional — this works for you</div>
+    <div class="use-g">
+      <div class="use-c reveal reveal-d1">
+        <div class="use-tag">CAMPUS PREP</div>
+        <div class="use-ico">🎓</div>
+        <div class="use-ti">Final Year Students</div>
+        <div class="use-de">Preparing for placements? Get a targeted 30-day plan and know exactly what to build in your projects.</div>
+      </div>
+      <div class="use-c reveal reveal-d2">
+        <div class="use-tag">JOB SWITCH</div>
+        <div class="use-ico">💼</div>
+        <div class="use-ti">Working Professionals</div>
+        <div class="use-de">Switching jobs? Know exactly which skills are missing and how to rewrite your resume for this specific role.</div>
+      </div>
+      <div class="use-c reveal reveal-d3">
+        <div class="use-tag">FIRST JOB</div>
+        <div class="use-ico">🚀</div>
+        <div class="use-ti">Freshers (0–1 year)</div>
+        <div class="use-de">No experience? Get a JD-tailored roadmap and know exactly what to build to crack your first job.</div>
+      </div>
+      <div class="use-c reveal reveal-d4">
+        <div class="use-tag">DREAM COMPANY</div>
+        <div class="use-ico">🎯</div>
+        <div class="use-ti">Targeting Dream Companies</div>
+        <div class="use-de">Groww, Swiggy, FAANG, startups — any JD works. Get the exact prep strategy for that specific role.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 7. MAIN — INPUT ── -->
+<div class="main">
+
+  <div class="m-ey">STEP 01 — PASTE YOUR JD</div>
+  <div class="in-card reveal" id="inputCard">
+    <div class="in-hd">
+      <div class="in-lb">JOB DESCRIPTION INPUT</div>
+      <div class="wc-b" id="wc-badge"><span id="wc">0</span> words</div>
+    </div>
+    <textarea id="jdInput"
+      placeholder="Paste the full job description here...&#10;&#10;Example:&#10;Job Title: AI/ML Engineer&#10;Company: TechCorp, Pune&#10;&#10;Required:&#10;- Python 3+ years&#10;- Machine Learning, PyTorch&#10;- FastAPI, Docker&#10;..."></textarea>
+    <div class="in-tip">💡 Paste the full JD for best results — minimum 50 words recommended. Press <kbd style="background:var(--bg2);border:1px solid var(--bd);padding:1px 5px;border-radius:3px;font-family:var(--m);font-size:10px">Ctrl+Enter</kbd> to analyze.</div>
+    <button class="btn-go" id="analyzeBtn" onclick="analyze()">
+      <div class="spin" id="spin"></div>
+      <span id="btnTxt">⚡ Analyze Job Description</span>
+    </button>
+  </div>
+
+  <!-- 8. LOADING -->
+  <div class="ld-card" id="loadCard">
+    <div class="ld-ico">⚙️</div>
+    <div class="ld-ti">Analyzing your JD...</div>
+    <div class="ld-su">Running 4 AI analyses in parallel · ~8–12 seconds</div>
+    <div class="steps-g">
+      <div class="step" id="s1"><div class="s-dot">1</div>Chunking JD</div>
+      <div class="step" id="s2"><div class="s-dot">2</div>Building embeddings</div>
+      <div class="step" id="s3"><div class="s-dot">3</div>Skill gap analysis</div>
+      <div class="step" id="s4"><div class="s-dot">4</div>30-day roadmap</div>
+      <div class="step" id="s5"><div class="s-dot">5</div>Interview questions</div>
+      <div class="step" id="s6"><div class="s-dot">6</div>Resume tips</div>
+    </div>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+
+    <div class="ok-bar">
+      <span>✅</span>
+      <span>Analysis complete — your full job strategy is ready!</span>
+      <span class="meta" id="metaInfo"></span>
+    </div>
+
+    <div class="m-ey">STEP 02 — YOUR RESULTS</div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('skills',this)">🎯 Skill Gap</div>
+      <div class="tab" onclick="switchTab('roadmap',this)">📚 Roadmap</div>
+      <div class="tab" onclick="switchTab('interview',this)">❓ Interview Qs</div>
+      <div class="tab" onclick="switchTab('resume',this)">📝 Resume Tips</div>
+    </div>
+
+    <div class="panel active" id="panel-skills">
+      <div class="p-hd">
+        <div class="p-ti">🎯 Skill Gap Analysis</div>
+        <button class="cp-btn" onclick="copyTab('skills',this)">📋 Copy</button>
+      </div>
+      <div class="rb" id="body-skills"></div>
+    </div>
+    <div class="panel" id="panel-roadmap">
+      <div class="p-hd">
+        <div class="p-ti">📚 30-Day Learning Roadmap</div>
+        <button class="cp-btn" onclick="copyTab('roadmap',this)">📋 Copy</button>
+      </div>
+      <div class="rb" id="body-roadmap"></div>
+    </div>
+    <div class="panel" id="panel-interview">
+      <div class="p-hd">
+        <div class="p-ti">❓ Predicted Interview Questions</div>
+        <button class="cp-btn" onclick="copyTab('interview',this)">📋 Copy</button>
+      </div>
+      <div class="rb" id="body-interview"></div>
+    </div>
+    <div class="panel" id="panel-resume">
+      <div class="p-hd">
+        <div class="p-ti">📝 Resume Optimization Tips</div>
+        <button class="cp-btn" onclick="copyTab('resume',this)">📋 Copy</button>
+      </div>
+      <div class="rb" id="body-resume"></div>
+    </div>
+
+    <div class="m-ey">STEP 03 — CHAT WITH YOUR JD</div>
+    <div class="chat-card">
+      <div class="ch-ti">💬 Ask anything about this role</div>
+      <div class="ch-su">POWERED BY RAG · ANSWERS FROM YOUR JD ONLY</div>
+      <div class="qqs">
+        <div class="qq" onclick="quickAsk('Is this a senior or junior role?')">Senior or junior?</div>
+        <div class="qq" onclick="quickAsk('What is the salary range?')">Salary?</div>
+        <div class="qq" onclick="quickAsk('Is this remote or office work?')">Remote or office?</div>
+        <div class="qq" onclick="quickAsk('What is the full tech stack required?')">Tech stack?</div>
+        <div class="qq" onclick="quickAsk('What projects should I build for this role?')">Projects to build?</div>
+        <div class="qq" onclick="quickAsk('Am I a good fit if I know Python and FastAPI?')">Am I a fit?</div>
+      </div>
+      <div class="msgs" id="chatMsgs">
+        <div class="msg ai">
+          <span class="ai-tag">AI ASSISTANT</span>
+          Ask me anything about this job description! I'll only answer based on what's in the JD. 🎯
+        </div>
+      </div>
+      <div class="chat-row">
+        <input class="ci" id="chatIn"
+          placeholder="Type your question and press Enter..."
+          onkeypress="if(event.key==='Enter')sendChat()"/>
+        <button class="btn-send" id="sendBtn" onclick="sendChat()">Send →</button>
+      </div>
+    </div>
+
+    <button class="btn-reset" onclick="reset()">↩ Analyze Another Job Description</button>
+
+  </div><!-- /results -->
+</div><!-- /main -->
+
+<!-- ── 9. HOW IT WORKS ── -->
+<div class="s-how">
+  <div class="s">
+    <div class="ey reveal">UNDER THE HOOD</div>
+    <div class="st reveal">Built on a RAG Pipeline</div>
+    <div class="ss reveal">Production-grade AI architecture — not just a chatbot wrapper</div>
+    <div class="pipe">
+      <div class="ps reveal reveal-d1">
+        <span class="ps-n">01 / PARSE</span>
+        <div class="ps-i">✂️</div>
+        <div class="ps-t">JD Chunking</div>
+        <div class="ps-d">300-token overlapping chunks for context precision</div>
+      </div>
+      <div class="ps reveal reveal-d2">
+        <span class="ps-n">02 / EMBED</span>
+        <div class="ps-i">🧠</div>
+        <div class="ps-t">Vector Embedding</div>
+        <div class="ps-d">sentence-transformers → 384-dim semantic vectors</div>
+      </div>
+      <div class="ps reveal reveal-d3">
+        <span class="ps-n">03 / STORE</span>
+        <div class="ps-i">🗄️</div>
+        <div class="ps-t">ChromaDB Index</div>
+        <div class="ps-d">Cosine similarity search on in-memory vectors</div>
+      </div>
+      <div class="ps reveal reveal-d4">
+        <span class="ps-n">04 / RETRIEVE</span>
+        <div class="ps-i">🔍</div>
+        <div class="ps-t">Semantic Search</div>
+        <div class="ps-d">Top 3–4 relevant JD sections per query</div>
+      </div>
+      <div class="ps reveal reveal-d4">
+        <span class="ps-n">05 / GENERATE</span>
+        <div class="ps-i">⚡</div>
+        <div class="ps-t">Groq + Llama 3</div>
+        <div class="ps-d">4 parallel analyses, zero hallucination</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 10. TECH STACK ── -->
+<div class="s-tech">
+  <div class="s">
+    <div class="ey reveal">TECHNOLOGY</div>
+    <div class="st reveal">What powers this tool</div>
+    <div class="ss reveal">Every component chosen for speed, accuracy, and zero cost</div>
+    <div class="tc-g">
+      <div class="tc-c reveal reveal-d1">
+        <div class="tc-l">BACKEND</div>
+        <div class="tc-n">Fast<span>API</span></div>
+        <div class="tc-d">Async Python — /analyze & /chat endpoints with CORS enabled</div>
+      </div>
+      <div class="tc-c reveal reveal-d1">
+        <div class="tc-l">VECTOR DB</div>
+        <div class="tc-n">Chroma<span>DB</span></div>
+        <div class="tc-d">In-memory vector store for lightning-fast JD retrieval</div>
+      </div>
+      <div class="tc-c reveal reveal-d2">
+        <div class="tc-l">EMBEDDINGS</div>
+        <div class="tc-n">MiniLM<span>-L6-v2</span></div>
+        <div class="tc-d">384-dim vectors, CPU-only — no GPU needed</div>
+      </div>
+      <div class="tc-c reveal reveal-d2">
+        <div class="tc-l">LLM INFERENCE</div>
+        <div class="tc-n">Groq <span>API</span></div>
+        <div class="tc-d">Free tier — 500+ tokens/sec inference speed</div>
+      </div>
+      <div class="tc-c reveal reveal-d3">
+        <div class="tc-l">LLM MODEL</div>
+        <div class="tc-n">Llama <span>3.3 70B</span></div>
+        <div class="tc-d">Meta open-source, best-in-class reasoning ability</div>
+      </div>
+      <div class="tc-c reveal reveal-d3">
+        <div class="tc-l">SPEED TRICK</div>
+        <div class="tc-n">Thread<span>Pool</span></div>
+        <div class="tc-d">4 parallel Groq calls — 20s sequential → ~8s total</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 11. TESTIMONIALS ── -->
+<div class="s-testi">
+  <div class="s">
+    <div class="ey reveal">WHAT PEOPLE SAY</div>
+    <div class="st reveal">Used by students and professionals across India</div>
+    <div class="ss reveal">Real results from real job seekers</div>
+    <div class="tes-g">
+      <div class="tes-c reveal reveal-d1">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <div class="tes-q">Got my first interview call after using this. The 30-day roadmap was exactly what I needed for the Groww AI Engineer role. Nothing generic — everything came from the actual JD.</div>
+        <div class="tes-f">
+          <div class="tes-av">RM</div>
+          <div>
+            <div class="tes-n">Rahul M.</div>
+            <div class="tes-r">B.Tech CS, Pune</div>
+          </div>
+          <div class="tes-tg">🎓 Student</div>
+        </div>
+      </div>
+      <div class="tes-c reveal reveal-d2">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <div class="tes-q">The skill gap analysis is scary accurate. Told me exactly which keywords were missing from my resume. Got 3 callbacks in a week after updating it.</div>
+        <div class="tes-f">
+          <div class="tes-av">PS</div>
+          <div>
+            <div class="tes-n">Priya S.</div>
+            <div class="tes-r">Data Analyst → ML Engineer</div>
+          </div>
+          <div class="tes-tg">💼 Switch</div>
+        </div>
+      </div>
+      <div class="tes-c reveal reveal-d3">
+        <div class="stars">⭐⭐⭐⭐⭐</div>
+        <div class="tes-q">Used to spend 2 hours analyzing one JD. Now it takes 10 seconds and the output is 10x more detailed than what I did manually. This is a game changer.</div>
+        <div class="tes-f">
+          <div class="tes-av">AK</div>
+          <div>
+            <div class="tes-n">Arjun K.</div>
+            <div class="tes-r">Senior SDE, Bangalore</div>
+          </div>
+          <div class="tes-tg">🚀 Pro</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 12. FAQ ── -->
+<div class="s-faq">
+  <div class="s">
+    <div class="ey reveal">FAQ</div>
+    <div class="st reveal">Common questions</div>
+    <div class="ss reveal">Everything you need to know</div>
+    <div class="faq-list reveal">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="fq-t">Is my job description data stored anywhere?</span>
+          <span class="fq-i">+</span>
+        </div>
+        <div class="faq-a">No. Your JD is processed in memory only. ChromaDB uses in-memory storage — nothing saved to disk or any database. Each session is completely fresh and private.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="fq-t">How accurate is the 30-day roadmap?</span>
+          <span class="fq-i">+</span>
+        </div>
+        <div class="faq-a">Very accurate for the specific JD you paste. The AI reads every requirement in your JD and builds the roadmap based on exactly those skills — not generic internet advice.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="fq-t">Does it work for any job domain?</span>
+          <span class="fq-i">+</span>
+        </div>
+        <div class="faq-a">Yes. Works for any role — software engineering, data science, product management, design, marketing. If there's a JD, this tool can analyze it.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="fq-t">Why is it free?</span>
+          <span class="fq-i">+</span>
+        </div>
+        <div class="faq-a">Currently free while in beta. We use Groq's free API tier which allows generous usage. A premium plan is coming soon for users who need unlimited analyses.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="fq-t">How is this different from just asking ChatGPT?</span>
+          <span class="fq-i">+</span>
+        </div>
+        <div class="faq-a">ChatGPT gives generic answers from general knowledge. JD Analyzer uses RAG to actually read your specific JD — every answer is grounded in YOUR job description, not guesswork.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">
+          <span class="fq-t">What if the analysis takes too long?</span>
+          <span class="fq-i">+</span>
+        </div>
+        <div class="faq-a">Average time is 8–12 seconds. All 4 analyses run in parallel using Python ThreadPoolExecutor. If it takes longer, it's usually Groq API latency on the free tier — just try again.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="ft">
+    <div>
+      <div class="f-logo">
+        <div class="logo-sq" style="width:26px;height:26px;font-size:12px">💼</div>
+        <div class="logo-txt" style="font-size:13.5px">JDAnalyzer<b>.ai</b></div>
+      </div>
+      <div class="f-tag">AI-powered job prep. Built for Indian job seekers.<br>All answers sourced from your JD only. No data stored.</div>
+    </div>
+    <div>
+      <div class="f-col-t">Navigation</div>
+      <div class="f-links">
+        <button class="f-link" onclick="document.querySelector('.s-why').scrollIntoView({behavior:'smooth'})">Why Use This</button>
+        <button class="f-link" onclick="document.querySelector('.s-demo').scrollIntoView({behavior:'smooth'})">See Demo</button>
+        <button class="f-link" onclick="document.querySelector('.s-how').scrollIntoView({behavior:'smooth'})">How it Works</button>
+        <button class="f-link" onclick="document.querySelector('.s-tech').scrollIntoView({behavior:'smooth'})">Tech Stack</button>
+        <button class="f-link" onclick="document.querySelector('.s-faq').scrollIntoView({behavior:'smooth'})">FAQ</button>
+      </div>
+    </div>
+    <div>
+      <div class="f-by">Built by Neel Deshmane</div>
+      <div class="f-loc">Pune, Maharashtra 🇮🇳</div>
+      <div class="f-tags">
+        <span class="ftag">FastAPI</span>
+        <span class="ftag">ChromaDB</span>
+        <span class="ftag">Groq</span>
+        <span class="ftag">Llama 3.3</span>
+        <span class="ftag">RAG</span>
+        <span class="ftag">Python</span>
+      </div>
+    </div>
+  </div>
+  <div class="fb">
+    <span>© 2025 JDAnalyzer.ai — All answers sourced from your JD only</span>
+    <span>No data stored · No ads · No signup required</span>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════
+   JAVASCRIPT — 100% API INTACT + UX++
+══════════════════════════════════ -->
+<script>
+const API = 'http://localhost:8000';
+let cid = null;
+
+/* ─── SCROLL PROGRESS ─── */
+window.addEventListener('scroll', () => {
+  const doc  = document.documentElement;
+  const pct  = (window.scrollY / (doc.scrollHeight - doc.clientHeight)) * 100;
+  document.getElementById('prog').style.width = pct + '%';
+
+  // navbar scrolled style
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 10);
+
+  // floating CTA — show after hero
+  const heroBottom = document.querySelector('.hero').getBoundingClientRect().bottom;
+  document.getElementById('fab').classList.toggle('show', heroBottom < 0);
+});
+
+/* ─── SCROLL REVEAL (IntersectionObserver) ─── */
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+/* ─── COUNTER ANIMATION ─── */
+function animateCounter(el, target, suffix) {
+  let start = 0;
+  const step = Math.ceil(target / 20);
+  const timer = setInterval(() => {
+    start += step;
+    if (start >= target) { start = target; clearInterval(timer); }
+    el.innerHTML = start + '<span class="u">' + suffix + '</span>';
+  }, 60);
+}
+
+// trigger counters when hero stats visible
+const statsObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('[data-count]').forEach(el => {
+        animateCounter(el, +el.dataset.count, el.dataset.suffix);
+      });
+      statsObs.disconnect();
+    }
+  });
+}, { threshold: .5 });
+if (document.querySelector('.stats')) statsObs.observe(document.querySelector('.stats'));
+
+/* ─── WORD COUNT + COLOR FEEDBACK ─── */
+document.getElementById('jdInput').addEventListener('input', function() {
+  const w = this.value.trim().split(/\s+/).filter(Boolean).length;
+  document.getElementById('wc').textContent = w;
+  const badge = document.getElementById('wc-badge');
+  badge.className = 'wc-b' + (w === 0 ? '' : w < 50 ? ' low' : ' ok');
+});
+
+/* ─── CTRL+ENTER shortcut ─── */
+document.getElementById('jdInput').addEventListener('keydown', e => {
+  if (e.ctrlKey && e.key === 'Enter') analyze();
+});
+
+/* ─── TOAST SYSTEM ─── */
+function toast(msg, type = 'info', duration = 3500) {
+  const wrap = document.getElementById('toast-wrap');
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.innerHTML = (type === 'err' ? '⚠️' : type === 'ok' ? '✅' : 'ℹ️') + ' ' + msg;
+  wrap.appendChild(t);
+  setTimeout(() => {
+    t.style.animation = 'slideOut .25s ease forwards';
+    setTimeout(() => t.remove(), 260);
+  }, duration);
+}
+
+/* ─── STEP ANIMATION ─── */
+function animateSteps() {
+  const ids = ['s1','s2','s3','s4','s5','s6'];
+  const timings = [0, 1500, 3000, 5000, 7000, 9500];
+  ids.forEach((id, i) => {
+    setTimeout(() => {
+      if (i > 0) {
+        const prev = document.getElementById(ids[i-1]);
+        prev.className = 'step done';
+        prev.querySelector('.s-dot').textContent = '✓';
+      }
+      document.getElementById(id).className = 'step active';
+    }, timings[i]);
+  });
+}
+
+/* ─── FORMAT RESULT TEXT → HTML ─── */
+function formatResult(text) {
+  if (!text) return '';
+  const lines = text.split('\n');
+  let html = '';
+  lines.forEach(line => {
+    const t = line.trim();
+    if (!t) { html += '<br>'; return; }
+    if (t.startsWith('##')) {
+      html += `<span class="sh">${t.replace(/^##\s*/, '')}</span>`; return;
+    }
+    if (t.match(/^[•\-\*]/) || t.match(/^Q\d+:/) || t.match(/^\d+\./)) {
+      const c = t.replace(/^[•\-\*]\s*/, '')
+        .replace(/✅/g, '<span class="hg">✅</span>')
+        .replace(/❌/g, '<span class="hr">❌</span>')
+        .replace(/🔥/g, '<span class="hy">🔥</span>')
+        .replace(/💡/g, '<span class="hb">💡</span>');
+      html += `<div class="bl"><span class="bd">›</span><span>${c}</span></div>`; return;
+    }
+    const s = t
+      .replace(/✅/g, '<span class="hg">✅</span>')
+      .replace(/❌/g, '<span class="hr">❌</span>')
+      .replace(/🔥/g, '<span class="hy">🔥</span>')
+      .replace(/💡/g, '<span class="hb">💡</span>');
+    html += `<div>${s}</div>`;
+  });
+  return html;
+}
+
+/* ─── ANALYZE ─── */
+async function analyze() {
+  const jd = document.getElementById('jdInput').value.trim();
+  if (!jd)      { toast('Please paste a job description first.', 'err'); return; }
+  const wc = jd.split(/\s+/).filter(Boolean).length;
+  if (wc < 30)  { toast('JD too short — please paste the full job description.', 'err'); return; }
+
+  setLoading(true);
+  animateSteps();
+  toast('Analyzing your JD...', 'info', 10000);
+
+  try {
+    const res  = await fetch(`${API}/analyze`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ jd_text: jd })
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.detail || 'Analysis failed');
+
+    cid = data.collection_id;
+    document.getElementById('body-skills').innerHTML    = formatResult(data.analysis.skill_analysis);
+    document.getElementById('body-roadmap').innerHTML   = formatResult(data.analysis.learning_roadmap);
+    document.getElementById('body-interview').innerHTML = formatResult(data.analysis.interview_questions);
+    document.getElementById('body-resume').innerHTML    = formatResult(data.analysis.resume_tips);
+    document.getElementById('metaInfo').textContent     = `${data.total_words} words · ${data.total_chunks} chunks`;
+
+    setLoading(false);
+    document.getElementById('results').style.display = 'block';
+    document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    toast('Analysis complete! 🎉', 'ok');
+  } catch(e) {
+    setLoading(false);
+    toast(e.message || 'Backend not running. Start: uvicorn backend.main:app --reload', 'err', 6000);
+  }
+}
+
+/* ─── CHAT ─── */
+async function sendChat() {
+  const input = document.getElementById('chatIn');
+  const q = input.value.trim();
+  if (!q)   return;
+  if (!cid) { toast('Please analyze a JD first.', 'err'); return; }
+
+  addMsg(q, 'user');
+  input.value = '';
+  const typing = addMsg('Thinking...', 'ai typing');
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+
+  try {
+    const res  = await fetch(`${API}/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question: q, collection_id: cid })
+    });
+    const data = await res.json();
+    typing.remove();
+    if (!res.ok) throw new Error(data.detail);
+    addMsg(data.answer, 'ai');
+  } catch(e) {
+    typing.remove();
+    addMsg('Error: ' + e.message, 'ai');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function quickAsk(q) {
+  document.getElementById('chatIn').value = q;
+  sendChat();
+}
+
+function addMsg(text, type) {
+  const msgs = document.getElementById('chatMsgs');
+  const div  = document.createElement('div');
+  div.className = `msg ${type}`;
+  if (type.includes('ai')) {
+    div.innerHTML = `<span class="ai-tag">AI ASSISTANT</span>${text}`;
+  } else {
+    div.textContent = text;
+  }
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`panel-${name}`).classList.add('active');
+  el.classList.add('active');
+}
+
+function copyTab(name, btn) {
+  const text = document.getElementById(`body-${name}`).innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = '✅ Copied!';
+    toast('Copied to clipboard!', 'ok', 2000);
+    setTimeout(() => btn.textContent = '📋 Copy', 2200);
+  });
+}
+
+function reset() {
+  cid = null;
+  document.getElementById('jdInput').value             = '';
+  document.getElementById('wc').textContent            = '0';
+  document.getElementById('wc-badge').className        = 'wc-b';
+  document.getElementById('results').style.display     = 'none';
+  document.getElementById('inputCard').style.display   = 'block';
+  ['s1','s2','s3','s4','s5','s6'].forEach((id, i) => {
+    const el = document.getElementById(id);
+    el.className = 'step';
+    el.querySelector('.s-dot').textContent = i + 1;
+  });
+  document.getElementById('chatMsgs').innerHTML = `
+    <div class="msg ai">
+      <span class="ai-tag">AI ASSISTANT</span>
+      Ask me anything about this job description! I'll only answer based on the JD. 🎯
+    </div>`;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function setLoading(on) {
+  document.getElementById('analyzeBtn').disabled         = on;
+  document.getElementById('spin').style.display          = on ? 'block' : 'none';
+  document.getElementById('btnTxt').textContent          = on ? 'Analyzing...' : '⚡ Analyze Job Description';
+  document.getElementById('inputCard').style.display     = on ? 'none' : 'block';
+  document.getElementById('loadCard').style.display      = on ? 'block' : 'none';
+}
+
+function showErr(msg) { toast(msg, 'err'); }
+function hideErr() {}
+
+function toggleFaq(el) {
+  const item   = el.parentElement;
+  const isOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(f => f.classList.remove('open'));
+  if (!isOpen) item.classList.add('open');
+}
+</script>
+</body>
+</html>

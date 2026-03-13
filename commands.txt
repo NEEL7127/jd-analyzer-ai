@@ -1,0 +1,10 @@
+http://localhost:8000/docs backend
+cd "C:\Users\admin\Desktop\ALL AIML PROJECTS\AI JD ANALYZER\job-analyzer-ai"
+& "C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe" -m backend.main
+start backend
+
+http://127.0.0.1:5500/index.html
+
+cd "C:\Users\admin\Desktop\ALL AIML PROJECTS\AI JD ANALYZER\job-analyzer-ai\frontend"
+& "C:\Users\admin\AppData\Local\Programs\Python\Python311\python.exe" -m http.server 5500
+start frontend

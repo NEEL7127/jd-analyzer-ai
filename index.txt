@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JD Analyzer AI — Your Job Strategy in Seconds</title>
+    <style>
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        :root {
+            --bg         : #07070f;
+            --bg-card    : rgba(255,255,255,0.03);
+            --bg-card2   : rgba(255,255,255,0.06);
+            --border     : rgba(255,255,255,0.07);
+            --border-lit : rgba(99,102,241,0.45);
+            --accent     : #6366f1;
+            --accent2    : #8b5cf6;
+            --green      : #22c55e;
+            --red        : #ef4444;
+            --yellow     : #f59e0b;
+            --text       : #f1f5f9;
+            --muted      : #64748b;
+            --soft       : #94a3b8;
+        }
+
+        body {
+            font-family : 'Segoe UI', system-ui, sans-serif;
+            background  : var(--bg);
+            color       : var(--text);
+            min-height  : 100vh;
+        }
+
+        /* ── NAVBAR ── */
+        nav {
+            display         : flex;
+            align-items     : center;
+            justify-content : space-between;
+            padding         : 14px 32px;
+            border-bottom   : 1px solid var(--border);
+            backdrop-filter : blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position        : sticky;
+            top             : 0;
+            z-index         : 100;
+            background      : rgba(7,7,15,0.85);
+        }
+
+        .logo {
+            display     : flex;
+            align-items : center;
+            gap         : 10px;
+            font-weight : 800;
+            font-size   : 17px;
+        }
+
+        .logo-box {
+            width           : 34px;
+            height          : 34px;
+            background      : linear-gradient(135deg,var(--accent),var(--accent2));
+            border-radius   : 9px;
+            display         : flex;
+            align-items     : center;
+            justify-content : center;
+            font-size       : 16px;
+        }
+
+        .nav-right {
+            display    : flex;
+            align-items: center;
+            gap        : 10px;
+        }
+
+        .badge {
+            font-size     : 11px;
+            padding       : 4px 12px;
+            border-radius : 100px;
+            border        : 1px solid rgba(99,102,241,0.3);
+            background    : rgba(99,102,241,0.08);
+            color         : #818cf8;
+            letter-spacing: 0.5px;
+        }
+
+        /* ── HERO ── */
+        .hero {
+            text-align : center;
+            padding    : 70px 24px 50px;
+            position   : relative;
+            overflow   : hidden;
+        }
+
+        .hero::before {
+            content   : '';
+            position  : absolute;
+            inset     : 0;
+            background: radial-gradient(ellipse 80% 50% at 50% -10%,
+                        rgba(99,102,241,0.14) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-tag {
+            display       : inline-flex;
+            align-items   : center;
+            gap           : 6px;
+            border        : 1px solid rgba(99,102,241,0.3);
+            border-radius : 100px;
+            padding       : 6px 16px;
+            font-size     : 11px;
+            color         : #818cf8;
+            letter-spacing: 2px;
+            margin-bottom : 24px;
+            background    : rgba(99,102,241,0.07);
+        }
+
+        .hero h1 {
+            font-size    : clamp(30px,5.5vw,56px);
+            font-weight  : 900;
+            line-height  : 1.1;
+            margin-bottom: 18px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .grad {
+            background             : linear-gradient(135deg,#818cf8,#c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-sub {
+            color      : var(--muted);
+            font-size  : 16px;
+            max-width  : 500px;
+            margin     : 0 auto 40px;
+            line-height: 1.7;
+        }
+
+        /* FEATURE PILLS */
+        .pills {
+            display        : flex;
+            flex-wrap      : wrap;
+            gap            : 8px;
+            justify-content: center;
+            margin-bottom  : 56px;
+        }
+
+        .pill {
+            display     : flex;
+            align-items : center;
+            gap         : 6px;
+            background  : var(--bg-card2);
+            border      : 1px solid var(--border);
+            border-radius: 100px;
+            padding     : 7px 14px;
+            font-size   : 13px;
+            color       : var(--soft);
+            transition  : all 0.2s;
+        }
+
+        /* ── INPUT SECTION ── */
+        .main {
+            max-width: 820px;
+            margin   : 0 auto;
+            padding  : 0 24px 80px;
+        }
+
+        .input-card {
+            background   : var(--bg-card);
+            border       : 1px solid var(--border);
+            border-radius: 20px;
+            padding      : 28px;
+            transition   : border 0.3s;
+        }
+
+        .input-card:focus-within { border-color: var(--border-lit); }
+
+        .input-header {
+            display        : flex;
+            justify-content: space-between;
+            align-items    : center;
+            margin-bottom  : 14px;
+        }
+
+        .input-label {
+            font-size     : 12px;
+            color         : var(--muted);
+            letter-spacing: 1.5px;
+            font-weight   : 600;
+        }
+
+        .word-badge {
+            font-size  : 12px;
+            color      : var(--muted);
+            background : var(--bg-card2);
+            padding    : 3px 10px;
+            border-radius: 100px;
+            border     : 1px solid var(--border);
+        }
+
+        textarea {
+            width        : 100%;
+            min-height   : 220px;
+            background   : rgba(255,255,255,0.035);
+            border       : 1px solid var(--border);
+            border-radius: 14px;
+            padding      : 16px;
+            color        : var(--text);
+            font-size    : 14px;
+            font-family  : inherit;
+            resize       : vertical;
+            line-height  : 1.8;
+            transition   : border 0.2s;
+        }
+
+        textarea:focus    { outline:none; border-color:rgba(99,102,241,0.4); }
+        textarea::placeholder { color:#2d3748; }
+
+        /* ANALYZE BUTTON */
+        .btn-main {
+            width          : 100%;
+            padding        : 17px;
+            margin-top     : 16px;
+            background     : linear-gradient(135deg,var(--accent),var(--accent2));
+            color          : white;
+            border         : none;
+            border-radius  : 14px;
+            font-size      : 15px;
+            font-weight    : 700;
+            cursor         : pointer;
+            display        : flex;
+            align-items    : center;
+            justify-content: center;
+            gap            : 10px;
+            transition     : all 0.2s;
+            letter-spacing : 0.3px;
+        }
+
+        .btn-main:hover    { opacity:.9; transform:translateY(-1px); box-shadow:0 8px 32px rgba(99,102,241,0.3); }
+        .btn-main:active   { transform:scale(.99); }
+        .btn-main:disabled { opacity:.4; cursor:not-allowed; transform:none; box-shadow:none; }
+
+        .spinner {
+            width        : 18px;
+            height       : 18px;
+            border       : 2px solid rgba(255,255,255,0.25);
+            border-top   : 2px solid white;
+            border-radius: 50%;
+            animation    : spin .7s linear infinite;
+            display      : none;
+        }
+        @keyframes spin { to { transform:rotate(360deg); } }
+
+        /* ── LOADING ── */
+        .loading-card {
+            display      : none;
+            background   : var(--bg-card);
+            border       : 1px solid var(--border);
+            border-radius: 20px;
+            padding      : 48px 32px;
+            text-align   : center;
+        }
+
+        .loading-icon {
+            font-size    : 40px;
+            margin-bottom: 16px;
+            animation    : pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.5} }
+
+        .loading-title {
+            font-size    : 18px;
+            font-weight  : 800;
+            margin-bottom: 8px;
+        }
+
+        .loading-sub {
+            font-size    : 13px;
+            color        : var(--muted);
+            margin-bottom: 32px;
+        }
+
+        .steps-grid {
+            display              : grid;
+            grid-template-columns: 1fr 1fr;
+            gap                  : 10px;
+            max-width            : 420px;
+            margin               : 0 auto;
+        }
+
+        .step {
+            display     : flex;
+            align-items : center;
+            gap         : 10px;
+            background  : var(--bg-card2);
+            border      : 1px solid var(--border);
+            border-radius: 10px;
+            padding     : 10px 14px;
+            font-size   : 13px;
+            color       : var(--muted);
+            transition  : all 0.3s;
+            text-align  : left;
+        }
+
+        .step.active {
+            border-color: rgba(99,102,241,0.4);
+            color       : var(--text);
+            background  : rgba(99,102,241,0.07);
+        }
+
+        .step.done {
+            border-color: rgba(34,197,94,0.3);
+            color       : var(--green);
+            background  : rgba(34,197,94,0.05);
+        }
+
+        .step-dot {
+            width        : 22px;
+            height       : 22px;
+            border-radius: 50%;
+            border       : 1px solid currentColor;
+            display      : flex;
+            align-items  : center;
+            justify-content: center;
+            font-size    : 10px;
+            flex-shrink  : 0;
+        }
+
+        /* ── RESULTS ── */
+        .results {
+            display  : none;
+            animation: fadeUp .4s ease;
+        }
+
+        @keyframes fadeUp {
+            from { opacity:0; transform:translateY(16px); }
+            to   { opacity:1; transform:translateY(0); }
+        }
+
+        /* SUCCESS BAR */
+        .success-bar {
+            display      : flex;
+            align-items  : center;
+            gap          : 12px;
+            background   : rgba(34,197,94,0.07);
+            border       : 1px solid rgba(34,197,94,0.2);
+            border-radius: 14px;
+            padding      : 14px 20px;
+            margin-bottom: 20px;
+            font-size    : 14px;
+            color        : #86efac;
+        }
+
+        .success-bar .meta {
+            margin-left: auto;
+            font-size  : 12px;
+            color      : var(--muted);
+        }
+
+        /* TABS */
+        .tabs {
+            display      : flex;
+            gap          : 6px;
+            margin-bottom: 14px;
+            flex-wrap    : wrap;
+        }
+
+        .tab {
+            display     : flex;
+            align-items : center;
+            gap         : 6px;
+            padding     : 10px 16px;
+            background  : var(--bg-card);
+            border      : 1px solid var(--border);
+            border-radius: 10px;
+            color       : var(--muted);
+            font-size   : 13px;
+            font-weight : 500;
+            cursor      : pointer;
+            transition  : all 0.2s;
+        }
+
+        .tab:hover  { border-color:rgba(99,102,241,0.3); color:var(--soft); }
+
+        .tab.active {
+            background  : rgba(99,102,241,0.12);
+            border-color: rgba(99,102,241,0.4);
+            color       : #818cf8;
+            font-weight : 700;
+        }
+
+        /* PANELS */
+        .panel {
+            display      : none;
+            background   : var(--bg-card);
+            border       : 1px solid var(--border);
+            border-radius: 18px;
+            padding      : 28px;
+            margin-bottom: 16px;
+            animation    : fadeUp .25s ease;
+        }
+
+        .panel.active { display:block; }
+
+        .panel-head {
+            display      : flex;
+            align-items  : center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+            flex-wrap    : wrap;
+            gap          : 10px;
+        }
+
+        .panel-title {
+            font-size  : 18px;
+            font-weight: 800;
+            display    : flex;
+            align-items: center;
+            gap        : 10px;
+        }
+
+        /* FORMATTED RESULT CONTENT */
+        .result-body {
+            font-size  : 14px;
+            line-height: 1.95;
+            color      : var(--soft);
+        }
+
+        /* Style the markdown-like content */
+        .result-body .section-header {
+            font-size    : 15px;
+            font-weight  : 800;
+            color        : var(--text);
+            margin       : 20px 0 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+            display      : block;
+        }
+
+        .result-body .section-header:first-child { margin-top: 0; }
+
+        .result-body .bullet {
+            display      : flex;
+            gap          : 8px;
+            margin-bottom: 6px;
+            padding-left : 4px;
+        }
+
+        .result-body .bullet-dot {
+            color      : var(--accent);
+            flex-shrink: 0;
+            margin-top : 2px;
+        }
+
+        .result-body .highlight-green { color: var(--green); font-weight:600; }
+        .result-body .highlight-red   { color: var(--red);   font-weight:600; }
+        .result-body .highlight-yellow{ color: var(--yellow);font-weight:600; }
+        .result-body .highlight-accent{ color: #818cf8;      font-weight:600; }
+
+        .copy-btn {
+            display     : flex;
+            align-items : center;
+            gap         : 6px;
+            background  : var(--bg-card2);
+            border      : 1px solid var(--border);
+            color       : var(--muted);
+            padding     : 8px 14px;
+            border-radius: 8px;
+            font-size   : 12px;
+            cursor      : pointer;
+            transition  : all 0.2s;
+            white-space : nowrap;
+        }
+
+        .copy-btn:hover { border-color:rgba(99,102,241,0.3); color:#818cf8; }
+
+        /* ── CHAT ── */
+        .chat-card {
+            background   : var(--bg-card);
+            border       : 1px solid var(--border);
+            border-radius: 18px;
+            padding      : 24px;
+            margin-bottom: 16px;
+        }
+
+        .chat-header {
+            font-size    : 16px;
+            font-weight  : 700;
+            margin-bottom: 16px;
+            display      : flex;
+            align-items  : center;
+            gap          : 8px;
+        }
+
+        .quick-qs {
+            display      : flex;
+            flex-wrap    : wrap;
+            gap          : 7px;
+            margin-bottom: 14px;
+        }
+
+        .qq {
+            background   : var(--bg-card2);
+            border       : 1px solid var(--border);
+            border-radius: 100px;
+            padding      : 5px 13px;
+            font-size    : 12px;
+            color        : var(--muted);
+            cursor       : pointer;
+            transition   : all 0.2s;
+        }
+
+        .qq:hover {
+            border-color: rgba(99,102,241,0.35);
+            color       : #818cf8;
+            background  : rgba(99,102,241,0.08);
+        }
+
+        .chat-messages {
+            min-height    : 80px;
+            max-height    : 380px;
+            overflow-y    : auto;
+            display       : flex;
+            flex-direction: column;
+            gap           : 10px;
+            margin-bottom : 14px;
+            padding-right : 4px;
+        }
+
+        .msg {
+            padding      : 12px 16px;
+            border-radius: 12px;
+            font-size    : 14px;
+            line-height  : 1.65;
+            animation    : fadeUp .2s ease;
+            max-width    : 88%;
+        }
+
+        .msg.user {
+            background : rgba(99,102,241,0.1);
+            border     : 1px solid rgba(99,102,241,0.2);
+            color      : #c7d2fe;
+            align-self : flex-end;
+        }
+
+        .msg.ai {
+            background: var(--bg-card2);
+            border    : 1px solid var(--border);
+            color     : var(--soft);
+        }
+
+        .msg.ai .ai-tag {
+            font-size    : 10px;
+            color        : var(--accent);
+            font-weight  : 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 6px;
+            display      : block;
+        }
+
+        .msg.typing { color: var(--muted); font-style: italic; }
+
+        .chat-row {
+            display: flex;
+            gap    : 8px;
+        }
+
+        .chat-input {
+            flex        : 1;
+            background  : rgba(255,255,255,0.04);
+            border      : 1px solid var(--border);
+            border-radius: 10px;
+            padding     : 12px 16px;
+            color       : var(--text);
+            font-size   : 14px;
+            font-family : inherit;
+            transition  : border .2s;
+        }
+
+        .chat-input:focus         { outline:none; border-color:rgba(99,102,241,0.45); }
+        .chat-input::placeholder  { color:#2d3748; }
+
+        .btn-send {
+            padding      : 12px 20px;
+            background   : linear-gradient(135deg,var(--accent),var(--accent2));
+            color        : white;
+            border       : none;
+            border-radius: 10px;
+            font-size    : 14px;
+            font-weight  : 700;
+            cursor       : pointer;
+            transition   : opacity .2s;
+        }
+
+        .btn-send:hover    { opacity:.9; }
+        .btn-send:disabled { opacity:.4; cursor:not-allowed; }
+
+        /* ── ERROR ── */
+        .error-box {
+            display      : none;
+            background   : rgba(239,68,68,0.07);
+            border       : 1px solid rgba(239,68,68,0.25);
+            border-radius: 12px;
+            padding      : 13px 18px;
+            color        : #fca5a5;
+            font-size    : 14px;
+            margin-bottom: 16px;
+            align-items  : center;
+            gap          : 10px;
+        }
+
+        /* RESET BTN */
+        .btn-reset {
+            width          : 100%;
+            padding        : 15px;
+            background     : transparent;
+            border         : 1px solid var(--border);
+            border-radius  : 14px;
+            color          : var(--muted);
+            font-size      : 14px;
+            font-weight    : 600;
+            cursor         : pointer;
+            transition     : all .2s;
+            margin-bottom  : 20px;
+        }
+
+        .btn-reset:hover { border-color:rgba(99,102,241,0.3); color:#818cf8; }
+
+        /* ── FOOTER ── */
+        footer {
+            text-align : center;
+            padding    : 28px;
+            color      : var(--muted);
+            font-size  : 12px;
+            border-top : 1px solid var(--border);
+        }
+
+        /* ── SCROLLBAR ── */
+        ::-webkit-scrollbar       { width:5px; }
+        ::-webkit-scrollbar-track { background:transparent; }
+        ::-webkit-scrollbar-thumb { background:#1e293b; border-radius:3px; }
+
+        /* ── RESPONSIVE ── */
+        @media(max-width:600px) {
+            nav            { padding:12px 16px; }
+            .hero          { padding:48px 16px 32px; }
+            .main          { padding:0 16px 48px; }
+            .steps-grid    { grid-template-columns:1fr; }
+            .tabs          { gap:4px; }
+            .tab           { padding:8px 12px; font-size:12px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+    <div class="logo">
+        <div class="logo-box">💼</div>
+        JD Analyzer AI
+    </div>
+    <div class="nav-right">
+        <div class="badge">RAG · Llama 3 · Free</div>
+    </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+    <div class="hero-tag">⚡ POWERED BY RAG + LLAMA 3</div>
+    <h1>Paste any Job Description<br><span class="grad">Get your complete game plan</span></h1>
+    <p class="hero-sub">Skill gap · 30-day roadmap · Interview questions · Resume tips — all from one JD in seconds.</p>
+    <div class="pills">
+        <div class="pill">🎯 Skill Gap Analysis</div>
+        <div class="pill">📚 30-Day Roadmap</div>
+        <div class="pill">❓ Interview Questions</div>
+        <div class="pill">📝 Resume Tips</div>
+        <div class="pill">💬 Chat with JD</div>
+    </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+    <!-- ERROR -->
+    <div class="error-box" id="errBox">
+        ⚠️ <span id="errMsg">Something went wrong</span>
+    </div>
+
+    <!-- INPUT -->
+    <div class="input-card" id="inputCard">
+        <div class="input-header">
+            <div class="input-label">📋 PASTE JOB DESCRIPTION</div>
+            <div class="word-badge"><span id="wc">0</span> words</div>
+        </div>
+        <textarea id="jdInput" placeholder="Paste the full job description here...
+
+Example:
+Job Title: AI/ML Engineer
+Company: TechCorp, Pune
+
+Required Skills:
+- Python 3+ years
+- Machine Learning, PyTorch
+- FastAPI, Docker
+..."></textarea>
+        <button class="btn-main" id="analyzeBtn" onclick="analyze()">
+            <div class="spinner" id="spin"></div>
+            <span id="btnTxt">🚀 Analyze Job Description</span>
+        </button>
+    </div>
+
+    <!-- LOADING -->
+    <div class="loading-card" id="loadCard">
+        <div class="loading-icon">⚙️</div>
+        <div class="loading-title">Analyzing your JD...</div>
+        <div class="loading-sub">Running 4 AI analyses in parallel · ~8–12 seconds</div>
+        <div class="steps-grid">
+            <div class="step" id="s1"><div class="step-dot">1</div>Chunking JD</div>
+            <div class="step" id="s2"><div class="step-dot">2</div>Building embeddings</div>
+            <div class="step" id="s3"><div class="step-dot">3</div>Skill gap analysis</div>
+            <div class="step" id="s4"><div class="step-dot">4</div>30-day roadmap</div>
+            <div class="step" id="s5"><div class="step-dot">5</div>Interview questions</div>
+            <div class="step" id="s6"><div class="step-dot">6</div>Resume tips</div>
+        </div>
+    </div>
+
+    <!-- RESULTS -->
+    <div class="results" id="results">
+
+        <!-- SUCCESS BAR -->
+        <div class="success-bar">
+            <span>✅</span>
+            <span>Analysis complete — your full job strategy is ready!</span>
+            <span class="meta" id="metaInfo"></span>
+        </div>
+
+        <!-- TABS -->
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('skills',this)">🎯 Skill Gap</div>
+            <div class="tab" onclick="switchTab('roadmap',this)">📚 Roadmap</div>
+            <div class="tab" onclick="switchTab('interview',this)">❓ Interview Qs</div>
+            <div class="tab" onclick="switchTab('resume',this)">📝 Resume Tips</div>
+        </div>
+
+        <!-- SKILL GAP PANEL -->
+        <div class="panel active" id="panel-skills">
+            <div class="panel-head">
+                <div class="panel-title">🎯 Skill Gap Analysis</div>
+                <button class="copy-btn" onclick="copyTab('skills')">📋 Copy</button>
+            </div>
+            <div class="result-body" id="body-skills"></div>
+        </div>
+
+        <!-- ROADMAP PANEL -->
+        <div class="panel" id="panel-roadmap">
+            <div class="panel-head">
+                <div class="panel-title">📚 30-Day Learning Roadmap</div>
+                <button class="copy-btn" onclick="copyTab('roadmap')">📋 Copy</button>
+            </div>
+            <div class="result-body" id="body-roadmap"></div>
+        </div>
+
+        <!-- INTERVIEW PANEL -->
+        <div class="panel" id="panel-interview">
+            <div class="panel-head">
+                <div class="panel-title">❓ Predicted Interview Questions</div>
+                <button class="copy-btn" onclick="copyTab('interview')">📋 Copy</button>
+            </div>
+            <div class="result-body" id="body-interview"></div>
+        </div>
+
+        <!-- RESUME PANEL -->
+        <div class="panel" id="panel-resume">
+            <div class="panel-head">
+                <div class="panel-title">📝 Resume Optimization Tips</div>
+                <button class="copy-btn" onclick="copyTab('resume')">📋 Copy</button>
+            </div>
+            <div class="result-body" id="body-resume"></div>
+        </div>
+
+        <!-- CHAT -->
+        <div class="chat-card">
+            <div class="chat-header">💬 Chat with this JD</div>
+            <div class="quick-qs">
+                <div class="qq" onclick="quickAsk('Is this a senior or junior role?')">Senior or junior?</div>
+                <div class="qq" onclick="quickAsk('What is the salary range?')">Salary?</div>
+                <div class="qq" onclick="quickAsk('Is this remote or office?')">Remote or office?</div>
+                <div class="qq" onclick="quickAsk('What tech stack does this company use?')">Tech stack?</div>
+                <div class="qq" onclick="quickAsk('What projects should I build for this role?')">Projects to build?</div>
+                <div class="qq" onclick="quickAsk('Am I a good fit if I know Python and FastAPI?')">Am I a fit?</div>
+            </div>
+            <div class="chat-messages" id="chatMsgs">
+                <div class="msg ai">
+                    <span class="ai-tag">AI ASSISTANT</span>
+                    Ask me anything about this job description! I'll answer based only on what's in the JD. 🎯
+                </div>
+            </div>
+            <div class="chat-row">
+                <input class="chat-input" id="chatIn"
+                    placeholder="Ask anything about this JD..."
+                    onkeypress="if(event.key==='Enter')sendChat()"/>
+                <button class="btn-send" id="sendBtn" onclick="sendChat()">Send →</button>
+            </div>
+        </div>
+
+        <!-- RESET -->
+        <button class="btn-reset" onclick="reset()">🔄 Analyze Another Job Description</button>
+
+    </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+    Built with FastAPI · ChromaDB · Groq · Llama 3.3 70B · RAG Pipeline
+    <br><span style="color:#1e293b">All answers are based only on the provided job description</span>
+</footer>
+
+<script>
+    const API = 'http://localhost:8000';
+    let cid   = null;   // collection_id
+
+    // ── Word counter ──
+    document.getElementById('jdInput').addEventListener('input', function() {
+        const w = this.value.trim().split(/\s+/).filter(Boolean).length;
+        document.getElementById('wc').textContent = w;
+    });
+
+    // ── Loading animation ──
+    function animateSteps() {
+        const ids     = ['s1','s2','s3','s4','s5','s6'];
+        const timings = [0, 1500, 3000, 5000, 7000, 9500];
+        ids.forEach((id, i) => {
+            setTimeout(() => {
+                if (i > 0) {
+                    const prev = document.getElementById(ids[i-1]);
+                    prev.className = 'step done';
+                    prev.querySelector('.step-dot').textContent = '✓';
+                }
+                document.getElementById(id).className = 'step active';
+            }, timings[i]);
+        });
+    }
+
+    // ── Format result text ──
+    // Converts ##, •, ✅ ❌ 🔥 💡 into styled HTML
+    function formatResult(text) {
+        if (!text) return '';
+        const lines = text.split('\n');
+        let html    = '';
+
+        lines.forEach(line => {
+            const t = line.trim();
+            if (!t) { html += '<br>'; return; }
+
+            // ## Section header
+            if (t.startsWith('##')) {
+                html += `<span class="section-header">${t.replace(/^##\s*/,'')}</span>`;
+                return;
+            }
+
+            // Bullet lines starting with •, -, *, Q, or numbered
+            if (t.match(/^[•\-\*]/) || t.match(/^Q\d+:/) || t.match(/^\d+\./)) {
+                const content = t.replace(/^[•\-\*]\s*/,'')
+                                  .replace(/✅/g, '<span class="highlight-green">✅</span>')
+                                  .replace(/❌/g, '<span class="highlight-red">❌</span>')
+                                  .replace(/🔥/g, '<span class="highlight-yellow">🔥</span>')
+                                  .replace(/💡/g, '<span class="highlight-accent">💡</span>');
+                html += `<div class="bullet"><span class="bullet-dot">›</span><span>${content}</span></div>`;
+                return;
+            }
+
+            // Normal line
+            const styled = t
+                .replace(/✅/g, '<span class="highlight-green">✅</span>')
+                .replace(/❌/g, '<span class="highlight-red">❌</span>')
+                .replace(/🔥/g, '<span class="highlight-yellow">🔥</span>')
+                .replace(/💡/g, '<span class="highlight-accent">💡</span>');
+            html += `<div>${styled}</div>`;
+        });
+
+        return html;
+    }
+
+    // ── MAIN: Analyze JD ──
+    async function analyze() {
+        const jd = document.getElementById('jdInput').value.trim();
+
+        if (!jd) { showErr('Please paste a job description first.'); return; }
+
+        const wc = jd.split(/\s+/).filter(Boolean).length;
+        if (wc < 30) { showErr('JD too short — please paste the full job description.'); return; }
+
+        hideErr();
+        setLoading(true);
+        animateSteps();
+
+        try {
+            const res  = await fetch(`${API}/analyze`, {
+                method : 'POST',
+                headers: {'Content-Type':'application/json'},
+                body   : JSON.stringify({ jd_text: jd })
+            });
+
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.detail || 'Analysis failed');
+
+            cid = data.collection_id;
+
+            // Fill panels
+            document.getElementById('body-skills').innerHTML =
+                formatResult(data.analysis.skill_analysis);
+            document.getElementById('body-roadmap').innerHTML =
+                formatResult(data.analysis.learning_roadmap);
+            document.getElementById('body-interview').innerHTML =
+                formatResult(data.analysis.interview_questions);
+            document.getElementById('body-resume').innerHTML =
+                formatResult(data.analysis.resume_tips);
+
+            // Meta info
+            document.getElementById('metaInfo').textContent =
+                `${data.total_words} words · ${data.total_chunks} chunks indexed`;
+
+            setLoading(false);
+            document.getElementById('results').style.display = 'block';
+
+        } catch(e) {
+            setLoading(false);
+            showErr(e.message || 'Backend not running. Start with: uvicorn backend.main:app --reload');
+        }
+    }
+
+    // ── CHAT ──
+    async function sendChat() {
+        const input = document.getElementById('chatIn');
+        const q     = input.value.trim();
+        if (!q)   return;
+        if (!cid) { showErr('Analyze a JD first.'); return; }
+
+        addMsg(q, 'user');
+        input.value = '';
+
+        // Typing indicator
+        const typing = addMsg('Thinking...', 'ai typing');
+
+        const btn = document.getElementById('sendBtn');
+        btn.disabled = true;
+
+        try {
+            const res  = await fetch(`${API}/chat`, {
+                method : 'POST',
+                headers: {'Content-Type':'application/json'},
+                body   : JSON.stringify({ question:q, collection_id:cid })
+            });
+            const data = await res.json();
+            typing.remove();
+            if (!res.ok) throw new Error(data.detail);
+            addMsg(data.answer, 'ai');
+        } catch(e) {
+            typing.remove();
+            addMsg('Error: ' + e.message, 'ai');
+        } finally {
+            btn.disabled = false;
+        }
+    }
+
+    function quickAsk(q) {
+        document.getElementById('chatIn').value = q;
+        sendChat();
+    }
+
+    function addMsg(text, type) {
+        const msgs = document.getElementById('chatMsgs');
+        const div  = document.createElement('div');
+        div.className = `msg ${type}`;
+        if (type.includes('ai')) {
+            div.innerHTML = `<span class="ai-tag">AI ASSISTANT</span>${text}`;
+        } else {
+            div.textContent = text;
+        }
+        msgs.appendChild(div);
+        msgs.scrollTop = msgs.scrollHeight;
+        return div;
+    }
+
+    // ── TABS ──
+    function switchTab(name, el) {
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById(`panel-${name}`).classList.add('active');
+        el.classList.add('active');
+    }
+
+    // ── COPY ──
+    function copyTab(name) {
+        const text = document.getElementById(`body-${name}`).innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            event.target.textContent = '✅ Copied!';
+            setTimeout(() => event.target.textContent = '📋 Copy', 2000);
+        });
+    }
+
+    // ── RESET ──
+    function reset() {
+        cid = null;
+        document.getElementById('jdInput').value       = '';
+        document.getElementById('wc').textContent       = '0';
+        document.getElementById('results').style.display = 'none';
+        document.getElementById('inputCard').style.display = 'block';
+        // Reset steps
+        ['s1','s2','s3','s4','s5','s6'].forEach((id,i) => {
+            const el = document.getElementById(id);
+            el.className = 'step';
+            el.querySelector('.step-dot').textContent = i+1;
+        });
+        // Reset chat
+        document.getElementById('chatMsgs').innerHTML = `
+            <div class="msg ai">
+                <span class="ai-tag">AI ASSISTANT</span>
+                Ask me anything about this job description! 🎯
+            </div>`;
+        hideErr();
+        window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    // ── LOADING STATE ──
+    function setLoading(on) {
+        document.getElementById('analyzeBtn').disabled = on;
+        document.getElementById('spin').style.display  = on ? 'block' : 'none';
+        document.getElementById('btnTxt').textContent  = on ? 'Analyzing...' : '🚀 Analyze Job Description';
+        document.getElementById('inputCard').style.display  = on ? 'none' : 'block';
+        document.getElementById('loadCard').style.display   = on ? 'block' : 'none';
+    }
+
+    // ── ERROR ──
+    function showErr(msg) {
+        document.getElementById('errMsg').textContent  = msg;
+        document.getElementById('errBox').style.display = 'flex';
+    }
+
+    function hideErr() {
+        document.getElementById('errBox').style.display = 'none';
+    }
+</script>
+</body>
+</html>
+```
+
+---
+
