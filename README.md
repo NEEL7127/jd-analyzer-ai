@@ -48,7 +48,7 @@ jd-analyzer-ai/
 
 ⚙️ Local Setup
 Step 1 — Clone the repo
-bashgit clone https://github.com/YOUR_USERNAME/jd-analyzer-ai.git
+bashgit clone https://github.com/NEEL7127/jd-analyzer-ai
 cd jd-analyzer-ai
 Step 2 — Install dependencies
 bashpip install -r requirements.txt
